@@ -1,0 +1,125 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>이미지 업로드</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-image: url('image/그림1.png');
+            background-size: cover;
+            background-position: center;
+            background-repeat: no-repeat;
+        }
+
+        #upload-container {
+            position: relative;
+            width: 500px;
+            height: 300px;
+            border: 3px dashed #3498db;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            cursor: pointer;
+            background-image: url('image/그림3.png');
+            border-radius: 15px;
+            transition: border-color 0.3s;
+        }
+
+        #upload-container:hover {
+            border-color: #e74c3c;
+        }
+
+        #upload-label {
+            color: #3498db;
+            font-size: 18px;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 15px;
+        }
+
+        #upload-input {
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="upload-container">
+        <label for="upload-input">
+            <br>
+            <br>
+            <br>
+            <br>
+            Click to upload an image
+        </label>
+        <input type="file" id="upload-input" accept="image/*" onchange="showImage(this)">
+    </div>
+    <h1 style="font-size:3em; font-family:Jeju Gothic; position: absolute; top: 80px; left: 50%; transform: translateX(-50%); z-index: 2;">나이 분류</h1>
+
+    <script>
+        function showImage(input) {
+            if (input.files && input.files[0]) {
+                let reader = new FileReader();
+                
+                reader.onload = function (e) {
+                    const container = document.getElementById('upload-container');
+                    container.style.backgroundImage = 'none';
+                    container.style.border = 'none';
+                    container.innerHTML = '';
+                    container.appendChild(createImageElement(e.target.result));
+
+                    // 이미지를 백엔드로 전송
+                    uploadImageToServer(input.files[0]);
+                }
+
+                reader.readAsDataURL(input.files[0]);
+            }
+        }
+
+        function createImageElement(src) {
+            const img = document.createElement('img');
+            img.src = src;
+            img.style.width = '100%';
+            img.style.height = '100%';
+            img.style.objectFit = 'contain';
+            return img;
+        }
+
+        function uploadImageToServer(file) {
+            let formData = new FormData();
+            formData.append('image', file); 
+
+            fetch('/path/backend/api', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                console.log(data); // 백엔드에서 보내는 응답을 로깅.
+
+                // 응답을 바탕으로 웹페이지를 띄우기.
+                if(data.ageGroup === "50대 이상") {
+                    <iframe src="50대이상.html"></iframe>;
+                } else if(data.ageGroup === "50대 이하") {
+                    <iframe src="50대이하.html"></iframe>;
+                } else {
+                    console.error('Unexpected age group:', data.ageGroup);
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+        }
+    </script>
+</body>
+
+</html>
