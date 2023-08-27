@@ -21,5 +21,5 @@ jobs:
 
     - name: Upload files to GCP Cloud Storage
       run: |
-        gsutil cp -r ./html/image gs://frontend1206/
-        gsutil cp ./html/new.html gs://frontend1206/
+        gsutil cp -r ./image gs://frontend1206/
+        gsutil cp ./new.html gs://frontend1206/
